@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Адаптивне меню</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="#"><img src="https://static01.nyt.com/images/2022/04/04/multimedia/15ai-nocode/15ai-nocode-videoSixteenByNine3000.jpg?year=2022&h=1687&w=3000&s=00efe62e54ad17f8fbeda724cbabe3638e9f99f1319ee13473f6c0cd0db45267&k=ZQJBKqZ0VN&tw=1" alt="logo"/></a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#">Головна</a></li>
+        <li><a href="#">Послуги</a></li>
+        <li class="dropdown">
+          <a href="#">Портфоліо</a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Проект 1</a></li>
+            <li><a href="#">Проект 2</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Контакти</a></li>
+      </ul>
+      <div class="search-form">
+        <input type="text" placeholder="Пошук...">
+      </div>
+      <div class="burger-menu" onclick="toggleMenu()">
+        <div class="burger"></div>
+        <div class="burger"></div>
+        <div class="burger"></div>
+      </div>
+    </nav>
+  </header>
+
+  <script src="script.js"></script>
+
+  <style>
+    /* Загальні стилі */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #333;
+  padding: 10px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+}
+
+.nav-links li {
+  margin: 0 15px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 15px;
+  display: block;
+  transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+  background-color: #575757;
+}
+
+.dropdown-menu {
+  display: none;
+  list-style: none;
+  position: absolute;
+  background-color: #333;
+  padding: 10px 0;
+  top: 100%;
+  left: 0;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.search-form input {
+  padding: 5px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: none;
+}
+
+/* Стилі для бургер-меню */
+.burger-menu {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.burger {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 4px 0;
+}
+
+/* Адаптивність */
+@media (max-width: 992px) {
+  .nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background-color: #333;
+    padding: 10px;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .search-form {
+    display: none;
+  }
+
+  .burger-menu {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links li {
+    margin: 10px 0;
+  }
+}
+
+  </style>
+  <script>
+    function toggleMenu() {
+  const navLinks = document.querySelector('.nav-links');
+  navLinks.classList.toggle('active');
+}
+
+// Підсвічування активного пункту меню
+const links = document.querySelectorAll('.nav-links a');
+links.forEach(link => {
+  link.addEventListener('click', () => {
+    links.forEach(item => item.classList.remove('active-link'));
+    link.classList.add('active-link');
+  });
+});
+
+// Додати доступність для клавіатури
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Enter') {
+    const activeLink = document.querySelector('.nav-links a:focus');
+    if (activeLink) {
+      activeLink.click();
+    }
+  }
+});
+  </script>
+</body>
+</html>

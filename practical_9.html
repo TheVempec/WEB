@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Кешування та оптимізація</title>
+  <style>
+    /* Мінімізований CSS */
+    body{font-family:sans-serif;margin:0;padding:1rem}
+    header{display:flex;justify-content:space-between;align-items:center}
+    .dark{background:#111;color:#eee}
+    .gallery{display:flex;gap:.5rem}
+    .gallery img{width:100px;height:auto;display:block}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Ваші налаштування</h1>
+    <!-- Перемикач теми -->
+    <label>
+      <input type="checkbox" id="themeToggle">
+      Темна тема
+    </label>
+  </header>
+
+  <!-- Форма для введення імені -->
+  <section>
+    <h2>Форма користувача</h2>
+    <form id="userForm">
+      <input type="text" name="username" id="username" placeholder="Введіть ваше ім’я" required>
+      <button type="submit">Зберегти</button>
+    </form>
+    <p id="greeting"></p>
+  </section>
+
+  <!-- Галерея зображень -->
+  <section>
+    <h2>Галерея зображень</h2>
+    <div class="gallery">
+      <img src="https://media.istockphoto.com/id/1368965646/photo/multi-ethnic-guys-and-girls-taking-selfie-outdoors-with-backlight-happy-life-style-friendship.jpg?s=612x612&w=0&k=20&c=qYST1TAGoQGV_QnB_vMd4E8jdaQUUo95Sa2JaKSl_-4="  alt="Галерея 1" loading="lazy">
+      <img src="https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?semt=ais_hybrid&w=740"  alt="Галерея 2" loading="lazy">
+      <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww"  alt="Галерея 3" loading="lazy">
+    </div>
+  </section>
+
+  <!-- Динамічний контент -->
+  <section>
+    <h2>Дані з API</h2>
+    <div id="apiData">Завантажую дані...</div>
+  </section>
+
+  <script>
+    // Реєстрація Service Worker для кешування
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+
+    // Налаштування теми
+    const themeToggle = document.getElementById('themeToggle');
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      themeToggle.checked = true;
+    }
+    themeToggle.addEventListener('change', () => {
+      if (themeToggle.checked) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+
+    // Збереження імені з форми
+    const form = document.getElementById('userForm');
+    const input = document.getElementById('username');
+    const greeting = document.getElementById('greeting');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      localStorage.setItem('username', input.value);
+      showGreeting();
+    });
+
+    function showGreeting() {
+      const name = localStorage.getItem('username') || 'Гість';
+      greeting.textContent = `Привіт, ${name}!`;
+    }
+    showGreeting();
+
+    // Lazy-loading галереї через IntersectionObserver
+    document.addEventListener('DOMContentLoaded', () => {
+      const imgs = document.querySelectorAll('img[data-src]');
+      const obs = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            observer.unobserve(img);
+          }
+        });
+      }, { rootMargin: '100px' });
+      imgs.forEach(img => obs.observe(img));
+    });
+
+    // Кешування даних API у JS-кеш (Map)
+    const jsCache = new Map();
+    async function fetchWithCache(url) {
+      if (jsCache.has(url)) return jsCache.get(url);
+      const res = await fetch(url);
+      const data = await res.json();
+      jsCache.set(url, data);
+      return data;
+    }
+
+    // Виводимо динамічні дані
+    fetchWithCache('https://api.example.com/data')
+      .then(data => {
+        document.getElementById('apiData').textContent = JSON.stringify(data);
+      })
+      .catch(() => {
+        document.getElementById('apiData').textContent = 'Помилка завантаження';
+      });
+  </script>
+
+  <!-- Підключаємо мінімізований JS -->
+  <script>
+    // Код для кешування і мінімізації можна тут включити, наприклад, Terser або інший інструмент
+  </script>
+</body>
+</html>

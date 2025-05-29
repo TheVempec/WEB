@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Оптимізація зображень</title>
+  <style>
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .gallery img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .lazy {
+      filter: blur(15px);
+      transition: filter 0.5s ease;
+    }
+
+    .lazy.loaded {
+      filter: blur(0);
+    }
+  </style>
+</head>
+<body>
+
+
+  <picture class="lazy-picture" data-loaded="false">
+    <source data-srcset="images/How-to-Get-a-JPG-File-with-High-Resolution-Tools-and-Tips.webp 640w,
+                         images/nando-jpeg-quality-001.webp 1280w,
+                         images/stock-photo-114337435.webp 1920w"
+            type="image/webp" />
+    <source data-srcset="images/How-to-Get-a-JPG-File-with-High-Resolution-Tools-and-Tips.jpg 640w,
+                         images/nando-jpeg-quality-001.jpg 1280w,
+                         images/stock-photo-114337435.jpg 1920w"
+            type="image/jpeg" />
+    <img
+      class="lazy"
+      data-src="images/mountains-near-water-better-quality.jpg"
+      alt="Пейзаж з горами біля води"
+      width="1920"
+      height="1080"
+    />
+  </picture>
+
+  
+  <div class="gallery">
+   
+    <picture class="lazy-picture" data-loaded="false">
+      <source data-srcset="images/ny-no-2.webp 1x, images/ny-no-2@2x.webp 2x" type="image/webp" />
+      <source data-srcset="images/ny-no-2.jpg 1x, images/ny-no-2@2x.jpg 2x" type="image/jpeg" />
+      <img class="lazy" data-src="images/ny-no-2.jpg" alt="Нічний Нью-Йорк" width="300" height="200" />
+    </picture>
+
+    <picture class="lazy-picture" data-loaded="false">
+      <source data-srcset="images/ny-no-2.webp 1x, images/ny-no-2@2x.webp 2x" type="image/webp" />
+      <source data-srcset="images/mountains-near-water-better-quality.jpg 1x, images/ny-no-2@2x.jpg 2x" type="image/jpeg" />
+      <img class="lazy" data-src="images/ny-no-2.jpg" alt="Гори біля озера" width="300" height="200" />
+    </picture>
+
+    <picture class="lazy-picture" data-loaded="false">
+      <source data-srcset="images/How-to-Get-a-JPG-File-with-High-Resolution-Tools-and-Tips.webp 1x, images/How-to-Get-a-JPG-File-with-High-Resolution-Tools-and-Tips@2x.webp 2x" type="image/webp" />
+      <source data-srcset="images/How-to-Get-a-JPG-File-with-High-Resolution-Tools-and-Tips.jpg 1x, images/How-to-Get-a-JPG-File-with-High-Resolution-Tools-and-Tips@2x.jpg 2x" type="image/jpeg" />
+      <img class="lazy" data-src="images/How-to-Get-a-JPG-File-with-High-Resolution-Tools-and-Tips.jpg" alt="Гори біля озера" width="300" height="200" />
+    </picture>
+
+    <picture class="lazy-picture" data-loaded="false">
+      <source data-srcset="images/mountains-near-water-better-quality.webp 1x, images/mountains-near-water-better-quality@2x.webp 2x" type="image/webp" />
+      <source data-srcset="images/mountains-near-water-better-quality.jpg 1x, images/mountains-near-water-better-quality@2x.jpg 2x" type="image/jpeg" />
+      <img class="lazy" data-src="images/mountains-near-water-better-quality.jpg" alt="Гори біля озера" width="300" height="200" />
+    </picture>
+    
+  </div>
+
+ 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const lazyPictures = document.querySelectorAll('.lazy-picture');
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const picture = entry.target;
+
+           
+            if (picture.dataset.loaded === "true") return;
+
+            const sources = picture.querySelectorAll('source');
+            sources.forEach(source => {
+              const srcset = source.dataset.srcset;
+              if (srcset) {
+                source.setAttribute('srcset', srcset);
+              }
+            });
+
+            const img = picture.querySelector('img.lazy');
+            const imgSrc = img.dataset.src;
+            if (imgSrc) {
+              img.src = imgSrc;
+              img.addEventListener('load', () => {
+                img.classList.add('loaded');
+              });
+            }
+
+            picture.dataset.loaded = "true";
+            observer.unobserve(picture);
+          }
+        });
+      });
+
+      lazyPictures.forEach(picture => observer.observe(picture));
+    });
+  </script>
+</body>
+</html>

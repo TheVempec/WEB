@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Адаптивна типографіка</title>
+  <style>
+    :root {
+      --font-base: 'Segoe UI', sans-serif;
+      --font-size-base: 1rem;
+      --line-height-base: 1.6;
+      --max-line-length: 75ch;
+      --color-text: #222;
+      --color-bg: #fff;
+      --color-muted: #555;
+      --color-accent: #0077cc;
+    }
+
+    body {
+      font-family: var(--font-base);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-base);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      padding: 1rem;
+      margin: 0;
+    }
+
+    main {
+      max-width: var(--max-line-length);
+      margin: auto;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h3 {
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    blockquote {
+      font-style: italic;
+      color: var(--color-muted);
+      border-left: 4px solid #ccc;
+      padding-left: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    ul, ol {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    strong {
+      color: var(--color-accent);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95rem;
+        padding: 0.75rem;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      body {
+        font-size: 1.125rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Адаптивна типографіка у веб-дизайні</h1>
+    <h2>Що таке типографіка?</h2>
+    <p><strong>Типографіка</strong> — це мистецтво оформлення тексту. Вона включає вибір шрифтів, їх розмірів, міжрядкових інтервалів, довжини рядка та інших параметрів, що впливають на зручність читання.</p>
+    
+    <blockquote>«Добре оформлений текст не кидається в очі — він просто читається легко».</blockquote>
+    
+    <h2>Основні принципи</h2>
+    <ul>
+      <li>Гнучке масштабування шрифтів (fluid typography)</li>
+      <li>Контрастність між текстом і фоном</li>
+      <li>Ієрархія заголовків</li>
+      <li>Оптимальна довжина рядка</li>
+    </ul>
+    
+    <h3>Приклад таблиці типографічних одиниць</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Одиниця</th>
+          <th>Опис</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>rem</td>
+          <td>Відносна до кореневого шрифту (`html`)</td>
+        </tr>
+        <tr>
+          <td>em</td>
+          <td>Відносна до батьківського елементу</td>
+        </tr>
+        <tr>
+          <td>px</td>
+          <td>Фіксований піксель (менш адаптивний)</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <p>Пам’ятайте: якісна типографіка робить веб-інтерфейс не лише привабливим, але й зручним для користувачів на будь-якому пристрої.</p>
+  </main>
+</body>
+</html>

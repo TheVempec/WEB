@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Робота з веб-шрифтами</title>
+
+  
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+
+  <style>
+  
+    @font-face {
+      font-family: 'MyLocalFont';
+      src: url('fonts/MyLocalFont.woff2') format('woff2'),
+           url('fonts/MyLocalFont.woff') format('woff');
+      font-display: swap;
+    }
+
+    
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Playfair Display', 'MyLocalFont', Georgia, serif;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    blockquote {
+      font-style: italic;
+      border-left: 4px solid #ccc;
+      margin: 1rem 0;
+      padding-left: 1rem;
+      color: #666;
+      background: #f0f0f0;
+    }
+
+    ul, ol {
+      margin-left: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Типографіка в дії</h1>
+  <h2>Заголовок другого рівня</h2>
+  <h3>Заголовок третього рівня</h3>
+
+  <p>Це приклад основного <strong>тексту</strong>, який містить <em>виділення</em> для демонстрації можливостей типографіки.</p>
+
+  <blockquote>“Читабельність — це ключ до сприйняття інформації.”</blockquote>
+
+  <p>Нижче наведені приклади списків:</p>
+
+  <ul>
+    <li>Ненумерований список — пункт 1</li>
+    <li>Ненумерований список — пункт 2</li>
+  </ul>
+
+  <ol>
+    <li>Нумерований список — крок 1</li>
+    <li>Нумерований список — крок 2</li>
+  </ol>
+
+</body>
+</html>

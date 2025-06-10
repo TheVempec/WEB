@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>API Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+
+    #loader {
+      display: none;
+      font-weight: bold;
+      color: blue;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .pagination {
+      margin-top: 15px;
+    }
+
+    .pagination button {
+      margin-right: 5px;
+      padding: 5px 10px;
+    }
+
+    #search {
+      margin-bottom: 15px;
+      padding: 8px;
+      width: 100%;
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Пости з API</h1>
+  <input type="text" id="search" placeholder="Пошук за заголовком...">
+  <div id="loader">Завантаження...</div>
+  <div id="data-container"></div>
+  <div class="pagination" id="pagination"></div>
+
+  <script>
+    const API_URL = "https://jsonplaceholder.typicode.com/posts";
+    const loader = document.getElementById("loader");
+    const container = document.getElementById("data-container");
+    const pagination = document.getElementById("pagination");
+    const searchInput = document.getElementById("search");
+
+    let allData = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    async function fetchData() {
+      loader.style.display = "block";
+      try {
+        const cached = localStorage.getItem("cachedData");
+        if (cached) {
+          allData = JSON.parse(cached);
+          displayPage(currentPage);
+        } else {
+          const response = await fetch(API_URL);
+          if (!response.ok) throw new Error("Помилка завантаження");
+          const data = await response.json();
+          allData = data;
+          localStorage.setItem("cachedData", JSON.stringify(data));
+          displayPage(currentPage);
+        }
+      } catch (error) {
+        container.innerHTML = `<p style="color:red;">${error.message}</p>`;
+      } finally {
+        loader.style.display = "none";
+      }
+    }
+
+    function displayPage(page) {
+      container.innerHTML = "";
+      const start = (page - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageData = filterData().slice(start, end);
+
+      if (pageData.length === 0) {
+        container.innerHTML = "<p>Нічого не знайдено</p>";
+        return;
+      }
+
+      pageData.forEach(post => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<h3>${post.title}</h3><p>${post.body}</p>`;
+        container.appendChild(card);
+      });
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const totalItems = filterData().length;
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      pagination.innerHTML = "";
+
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = i;
+        btn.disabled = i === currentPage;
+        btn.onclick = () => {
+          currentPage = i;
+          displayPage(currentPage);
+        };
+        pagination.appendChild(btn);
+      }
+    }
+
+    function filterData() {
+      const query = searchInput.value.toLowerCase();
+      return allData.filter(post => post.title.toLowerCase().includes(query));
+    }
+
+    searchInput.addEventListener("input", () => {
+      currentPage = 1;
+      displayPage(currentPage);
+    });
+
+    fetchData();
+  </script>
+</body>
+</html>

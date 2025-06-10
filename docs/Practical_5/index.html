@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Валідація форми</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="date"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <form id="registrationForm" novalidate>
+    <div class="form-group">
+      <label for="username">Ім'я користувача:</label>
+      <input type="text" id="username" required />
+      <span class="error" id="usernameError"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" required />
+      <span class="error" id="emailError"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Пароль:</label>
+      <input type="password" id="password" required />
+      <span class="error" id="passwordError"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Підтвердження паролю:</label>
+      <input type="password" id="confirmPassword" required />
+      <span class="error" id="confirmPasswordError"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Телефон:</label>
+      <input type="tel" id="phone" required />
+      <span class="error" id="phoneError"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="dob">Дата народження:</label>
+      <input type="date" id="dob" min="1972-01-01" required />
+      <span class="error" id="dobError"></span>
+    </div>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="terms" required />
+        Я погоджуюся з умовами
+      </label>
+      <span class="error" id="termsError"></span>
+    </div>
+
+    <button type="submit">Зареєструватися</button>
+    <div id="formSuccess" class="success"></div>
+  </form>
+
+  <script>
+    document.getElementById("registrationForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      let valid = true;
+
+      document.querySelectorAll(".error").forEach((el) => (el.textContent = ""));
+      document.getElementById("formSuccess").textContent = "";
+
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const phone = document.getElementById("phone").value.trim();
+      const dob = document.getElementById("dob").value;
+      const terms = document.getElementById("terms").checked;
+
+      // Ім'я
+      if (username === "") {
+        document.getElementById("usernameError").textContent = "Поле обов’язкове";
+        valid = false;
+      }
+
+      // Email
+      const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/i;
+      if (!emailPattern.test(email)) {
+        document.getElementById("emailError").textContent = "Некоректний email";
+        valid = false;
+      }
+
+      // Пароль
+      const passwordPattern = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+      if (!passwordPattern.test(password)) {
+        document.getElementById("passwordError").textContent =
+          "Мін. 8 символів, 1 велика літера, 1 цифра";
+        valid = false;
+      }
+
+      // Підтвердження паролю
+      if (password !== confirmPassword) {
+        document.getElementById("confirmPasswordError").textContent =
+          "Паролі не співпадають";
+        valid = false;
+      }
+
+      // Телефон
+      const phonePattern = /^\+?[\d\s\-]{10,15}$/;
+      if (!phonePattern.test(phone)) {
+        document.getElementById("phoneError").textContent = "Введіть дійсний номер";
+        valid = false;
+      }
+
+      // Дата народження (після 01.01.1972 і 18+)
+      if (dob) {
+        const birthDate = new Date(dob);
+        const minDate = new Date("1972-01-01");
+        const today = new Date();
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        const isAdult = age > 18 || (age === 18 && m >= 0);
+
+        if (birthDate < minDate) {
+          document.getElementById("dobError").textContent =
+            "Дата має бути після 01.01.1972";
+          valid = false;
+        } else if (!isAdult) {
+          document.getElementById("dobError").textContent =
+            "Потрібно бути старше 18 років";
+          valid = false;
+        }
+      } else {
+        document.getElementById("dobError").textContent = "Оберіть дату";
+        valid = false;
+      }
+
+      // Умови
+      if (!terms) {
+        document.getElementById("termsError").textContent = "Необхідна згода";
+        valid = false;
+      }
+
+      if (valid) {
+        document.getElementById("formSuccess").textContent = "Успішна реєстрація!";
+        this.reset();
+      }
+    });
+  </script>
+</body>
+</html>

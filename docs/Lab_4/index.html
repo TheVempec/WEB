@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Динамічне меню</title>
+    <style>
+        /* Загальний стиль меню */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        nav.main-menu {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            position: relative;
+        }
+        
+        nav.main-menu .burger-menu {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        nav.main-menu .burger-menu span {
+            width: 30px;
+            height: 3px;
+            background-color: white;
+            display: block;
+            margin: 6px 0;
+        }
+        
+        #menuContainer {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        
+        #menuContainer li {
+            position: relative;
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        #menuContainer li:hover,
+        #menuContainer li.active {
+            background-color: #555;
+        }
+        
+        .submenu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background-color: #444;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .submenu li {
+            padding: 10px;
+        }
+        
+        .submenu li:hover {
+            background-color: #666;
+        }
+        
+        /* Анімації для підменю */
+        .submenu.open {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Стилі для мобільних пристроїв */
+        @media (max-width: 768px) {
+            nav.main-menu .burger-menu {
+                display: block;
+            }
+            
+            #menuContainer {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: #333;
+                padding: 10px;
+            }
+            
+            #menuContainer.open {
+                display: flex;
+            }
+            
+            #menuContainer li {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .submenu {
+                position: static;
+                display: none;
+                width: 100%;
+            }
+
+            .submenu.open {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="main-menu">
+        <button class="burger-menu" aria-label="Меню">
+            <span></span>
+        </button>
+        <ul id="menuContainer">
+            <!-- Пункти меню будуть додані динамічно -->
+        </ul>
+    </nav>
+
+    <script>
+        // Дані для меню в JSON форматі
+        const menuData = {
+            "items": [
+                {
+                    "title": "Головна",
+                    "link": "/",
+                    "submenu": []
+                },
+                {
+                    "title": "Про нас",
+                    "link": "/about",
+                    "submenu": [
+                        {
+                            "title": "Наша команда",
+                            "link": "/team",
+                            "submenu": []
+                        },
+                        {
+                            "title": "Історія",
+                            "link": "/history",
+                            "submenu": []
+                        }
+                    ]
+                },
+                {
+                    "title": "Послуги",
+                    "link": "/services",
+                    "submenu": [
+                        {
+                            "title": "Дизайн",
+                            "link": "/design",
+                            "submenu": []
+                        },
+                        {
+                            "title": "Розробка",
+                            "link": "/development",
+                            "submenu": []
+                        }
+                    ]
+                },
+                {
+                    "title": "Контакти",
+                    "link": "/contacts",
+                    "submenu": []
+                },
+                {
+                    "title": "Блог",
+                    "link": "/blog",
+                    "submenu": []
+                }
+            ]
+        };
+
+        // Функція для рендеринга меню
+        function renderMenu(items, parentElement) {
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${item.link}">${item.title}</a>`;
+                
+                if (item.submenu.length > 0) {
+                    const submenu = document.createElement('ul');
+                    submenu.classList.add('submenu');
+                    renderMenu(item.submenu, submenu);
+                    li.appendChild(submenu);
+                    
+                    li.addEventListener('mouseover', () => {
+                        submenu.classList.add('open');
+                    });
+                    li.addEventListener('mouseout', () => {
+                        submenu.classList.remove('open');
+                    });
+                }
+                
+                parentElement.appendChild(li);
+            });
+        }
+
+        // Ініціалізація меню
+        const menuContainer = document.getElementById('menuContainer');
+        renderMenu(menuData.items, menuContainer);
+
+        // Підтримка бургер-меню для мобільних пристроїв
+        const burgerMenu = document.querySelector('.burger-menu');
+        const menu = document.getElementById('menuContainer');
+        
+        burgerMenu.addEventListener('click', () => {
+            menu.classList.toggle('open');
+        });
+
+        // Підсвічування активного пункту меню
+        document.querySelectorAll('#menuContainer li').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('#menuContainer li').forEach(li => li.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>

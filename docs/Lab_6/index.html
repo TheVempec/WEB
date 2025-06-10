@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Фільтрація та сортування</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+    #active-filters {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Список товарів</h1>
+
+  <div class="filters">
+    <input type="text" id="search" placeholder="Пошук...">
+    <select id="categoryFilter">
+      <option value="">Усі категорії</option>
+      <option value="Електроніка">Електроніка</option>
+      <option value="Одяг">Одяг</option>
+      <option value="Інше">Інше</option>
+    </select>
+    <select id="sortBy">
+      <option value="name">Сортувати за назвою</option>
+      <option value="price">Сортувати за ціною</option>
+    </select>
+    <button id="resetBtn">Скинути фільтри</button>
+  </div>
+
+  <div id="active-filters"></div>
+  <div id="items-container"></div>
+
+  <script>
+    const data = [
+      { name: "Футболка", price: 300, category: "Одяг" },
+      { name: "Телефон", price: 7000, category: "Електроніка" },
+      { name: "Навушники", price: 1200, category: "Електроніка" },
+      { name: "Книга", price: 200, category: "Інше" },
+      { name: "Куртка", price: 1500, category: "Одяг" },
+    ];
+
+    class FilterSystem {
+      constructor(data) {
+        this.originalData = data;
+        this.filteredData = [...data];
+        this.searchTerm = localStorage.getItem("searchTerm") || "";
+        this.category = localStorage.getItem("category") || "";
+        this.sortBy = localStorage.getItem("sortBy") || "name";
+
+        this.searchInput = document.getElementById("search");
+        this.categoryFilter = document.getElementById("categoryFilter");
+        this.sortSelect = document.getElementById("sortBy");
+        this.container = document.getElementById("items-container");
+        this.activeFilters = document.getElementById("active-filters");
+
+        this.init();
+      }
+
+      init() {
+        this.searchInput.value = this.searchTerm;
+        this.categoryFilter.value = this.category;
+        this.sortSelect.value = this.sortBy;
+
+        this.searchInput.addEventListener("input", () => {
+          this.searchTerm = this.searchInput.value;
+          localStorage.setItem("searchTerm", this.searchTerm);
+          this.render();
+        });
+
+        this.categoryFilter.addEventListener("change", () => {
+          this.category = this.categoryFilter.value;
+          localStorage.setItem("category", this.category);
+          this.render();
+        });
+
+        this.sortSelect.addEventListener("change", () => {
+          this.sortBy = this.sortSelect.value;
+          localStorage.setItem("sortBy", this.sortBy);
+          this.render();
+        });
+
+        document.getElementById("resetBtn").addEventListener("click", () => {
+          this.resetFilters();
+        });
+
+        this.render();
+      }
+
+      applyFilters() {
+        return this.originalData.filter(item => {
+          const matchSearch = item.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+          const matchCategory = this.category ? item.category === this.category : true;
+          return matchSearch && matchCategory;
+        });
+      }
+
+      sortData(data) {
+        return [...data].sort((a, b) => {
+          if (this.sortBy === "name") {
+            return a.name.localeCompare(b.name);
+          } else if (this.sortBy === "price") {
+            return a.price - b.price;
+          }
+          return 0;
+        });
+      }
+
+      resetFilters() {
+        this.searchTerm = "";
+        this.category = "";
+        this.sortBy = "name";
+        localStorage.removeItem("searchTerm");
+        localStorage.removeItem("category");
+        localStorage.removeItem("sortBy");
+        this.init();
+      }
+
+      render() {
+        let filtered = this.applyFilters();
+        let sorted = this.sortData(filtered);
+
+        this.container.innerHTML = "";
+        this.activeFilters.innerHTML = `
+          Активні фільтри:
+          ${this.searchTerm ? `Пошук: "${this.searchTerm}" ` : ""}
+          ${this.category ? `Категорія: ${this.category}` : ""}
+          ${!this.searchTerm && !this.category ? "немає" : ""}
+        `;
+
+        if (sorted.length === 0) {
+          this.container.innerHTML = "<p>Нічого не знайдено.</p>";
+        } else {
+          sorted.forEach(item => {
+            const el = document.createElement("div");
+            el.className = "item";
+            el.innerHTML = `<strong>${item.name}</strong><br>Ціна: ${item.price} грн<br>Категорія: ${item.category}`;
+            this.container.appendChild(el);
+          });
+        }
+      }
+    }
+
+    const filterSystem = new FilterSystem(data);
+  </script>
+
+</body>
+</html>
